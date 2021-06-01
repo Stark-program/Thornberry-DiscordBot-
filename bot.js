@@ -12,7 +12,7 @@ client.on("voiceStateUpdate", (oldMember, newMember) => {
   let newUserChannel = newMember.channelID;
   let oldUserChannel = oldMember.channelID;
 
-  const authorized = [process.env.A_DISCORD_ID];
+  const authorized = [process.env.A_DISCORD_ID, process.env.C_DISCORD_ID];
   const talkingUsers = [];
 
   if (newUserChannel === process.env.DISCORD_CHANNEL_ID) {
