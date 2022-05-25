@@ -2,6 +2,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { Client, Collection, Intents } = require("discord.js");
 require("dotenv").config();
+const interuptUsers = require("./commands/interupt");
+
+console.log(interuptUsers);
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 client.login(process.env.DISCORD_LOGIN);
@@ -28,7 +31,6 @@ for (const file of commandFiles) {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
-  console.log(interaction);
   const command = client.commands.get(interaction.commandName);
 
   if (!command) return;
