@@ -3,6 +3,7 @@ const path = require("node:path");
 const { Client, Collection, Intents } = require("discord.js");
 require("dotenv").config();
 const interuptUsers = require("./commands/interupt");
+const Sequelize = require("sequelize");
 
 console.log(interuptUsers);
 
