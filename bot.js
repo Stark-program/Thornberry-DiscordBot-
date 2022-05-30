@@ -1,19 +1,15 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { Client, Collection, Intents } = require("discord.js");
+const { Collection } = require("discord.js");
 require("dotenv").config();
 const interuptUsers = require("./commands/interupt");
-const Sequelize = require("sequelize");
-
-console.log(interuptUsers);
-
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-client.login(process.env.DISCORD_LOGIN);
+const client = require("./client");
 
 // WHAT WE NEED DYNAMICALLY, FOR THIS BOT TO WORK IN EVERY DISCORD.
 // USER ID OF USERS WE WANT THE BOT TO INTERUPT
 // GUILD ID'S
 // CHANNEL ID'S
+client.login(process.env.DISCORD_LOGIN);
 /* ################# COMMANDS ##############################*/
 client.commands = new Collection();
 
