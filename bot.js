@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { Collection } = require("discord.js");
 require("dotenv").config();
-const interuptUsers = require("./commands/interupt");
+
 const client = require("./client");
 
 // WHAT WE NEED DYNAMICALLY, FOR THIS BOT TO WORK IN EVERY DISCORD.
@@ -51,7 +51,9 @@ const eventFiles = fs
 
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
+  console.log(filePath);
   const event = require(filePath);
+  console.log(event);
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
   } else {

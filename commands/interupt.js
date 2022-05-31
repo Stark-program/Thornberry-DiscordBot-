@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { Users } = require("../dataStorage/db");
+const Users = require("../dataStorage/db");
 const client = require("../client");
+
 async function getUserFromMention(mention) {
   if (!mention) return;
 
@@ -27,16 +28,20 @@ module.exports = {
         .setRequired(true);
     }),
   async execute(interaction) {
-    console.log("before", this.users);
     let userMentiond = interaction.options._hoistedOptions[0].value;
     let user = await getUserFromMention(userMentiond);
-    console.log(user);
-    // if (this.users.includes(userMentiond)) {
+    let discordUser = {
+      name: user.username,
+      discordId: user.id,
+    };
+    // if (this.users.includes(discordUser)) {
     //   return;
-    // } else {
-    //   this.users.push(userName);
-    // }
+    // } else this.users.push(discordUser);
 
-    console.log("after", this.users);
+    const addUserToDb = await Users.create({
+      name: user.username,
+      discordId: user.id,
+    });
+    console.log("added user to Sequelize");
   },
 };
