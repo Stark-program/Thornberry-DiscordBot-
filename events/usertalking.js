@@ -1,3 +1,5 @@
 //VoiceReceiver listener
 
-const { getVoiceConnection } = require("@discordjs/voice");
+const { VoiceReceiver } = require("@discordjs/voice");
+
+console.log(VoiceReceiver);
