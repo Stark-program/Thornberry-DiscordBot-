@@ -1,32 +1,30 @@
 const { joinVoiceChannel } = require("@discordjs/voice");
-const { EventEmitter } = require("events");
+const { createReadStream } = require("node:fs");
 const {
   createAudioPlayer,
   createAudioResource,
   NoSubscriberBehavior,
+  StreamType,
 } = require("@discordjs/voice");
-const { SlashCommandRoleOption } = require("@discordjs/builders");
-const emitter = new EventEmitter();
-
-emitter.setMaxListeners(10);
-
-const resource = createAudioResource("thornberry.mp3");
-console.log(resource.playStream._events.end);
-
-let end = resource.playStream._events;
-
-console.log(end);
 
 const player = createAudioPlayer({
   behaviors: {
     noSubscriber: NoSubscriberBehavior.Pause,
   },
 });
-if (resource.ended) {
-  player.play(resource);
-}
+let resource = createAudioResource(createReadStream("thornberry.ogg"), {
+  inputType: StreamType.OggOpus,
+});
 player.play(resource);
 
+player.on("stateChange", (oldState, newState) => {
+  console.log(
+    `Audio player transitioned from ${oldState.status} to ${newState.status}`
+  );
+  if (newState.status === "idle") {
+    resource = createAudioResource("thornberry.mp3");
+  }
+});
 module.exports = {
   name: "voiceStateUpdate",
   async execute(oldState, newState) {
@@ -40,15 +38,15 @@ module.exports = {
         selfDeaf: false,
         selfMute: false,
       });
-      connection.subscribe(player);
+
       connection.receiver.speaking.on("start", (userId) => {
-        player.play();
-        console.log(playAudio);
+        connection.subscribe(player);
+        player.play(resource);
+        player.unpause(resource);
       });
+
       connection.receiver.speaking.on("end", (userId) => {
-        // connection.subscribe(stop);
-        player.pause();
-        console.log(playAudio);
+        player.pause(resource);
       });
     }
   },
