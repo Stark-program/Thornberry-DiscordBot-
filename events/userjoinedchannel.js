@@ -6,6 +6,7 @@ const {
   NoSubscriberBehavior,
   StreamType,
 } = require("@discordjs/voice");
+const Users = require("../dataStorage/db");
 
 const player = createAudioPlayer({
   behaviors: {
@@ -22,32 +23,45 @@ player.on("stateChange", (oldState, newState) => {
     `Audio player transitioned from ${oldState.status} to ${newState.status}`
   );
   if (newState.status === "idle") {
-    resource = createAudioResource("thornberry.mp3");
+    resource = createAudioResource(createReadStream("thornberry.ogg"));
+  }
+  if (newState.status === "ended") {
+    resource = createAudioResource(createReadStream("thornberry.ogg"));
   }
 });
+let user = [];
+
 module.exports = {
   name: "voiceStateUpdate",
   async execute(oldState, newState) {
-    let voiceChannel = newState.channelId;
-    let guildId = newState.guild.id;
-    if (voiceChannel !== null) {
-      let connection = joinVoiceChannel({
-        channelId: voiceChannel,
-        guildId: guildId,
-        adapterCreator: newState.channel.guild.voiceAdapterCreator,
-        selfDeaf: false,
-        selfMute: false,
-      });
+    if (oldState.channelId !== newState.channelId) {
+      let voiceChannel = newState.channelId;
+      let guildId = newState.guild.id;
+      const discordIds = await Users.findAll();
 
-      connection.receiver.speaking.on("start", (userId) => {
+      if (voiceChannel !== null) {
+        let connection = joinVoiceChannel({
+          channelId: voiceChannel,
+          guildId: guildId,
+          adapterCreator: newState.channel.guild.voiceAdapterCreator,
+          selfDeaf: false,
+          selfMute: false,
+        });
+
         connection.subscribe(player);
-        player.play(resource);
-        player.unpause(resource);
-      });
+        connection.receiver.speaking.on("start", (userId) => {
+          if (user.includes(userId)) {
+            player.play(resource);
+            player.unpause(resource);
+          }
+        });
 
-      connection.receiver.speaking.on("end", (userId) => {
-        player.pause(resource);
-      });
+        connection.receiver.speaking.on("end", (userId) => {
+          if (user.includes(userId)) {
+            player.pause(resource);
+          }
+        });
+      }
     }
   },
 };

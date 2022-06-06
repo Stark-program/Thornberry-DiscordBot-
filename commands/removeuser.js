@@ -18,21 +18,21 @@ async function getUserFromMention(mention) {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("interupt")
-    .setDescription("Sets the user you would like to be interupted")
+    .setName("removeuser")
+    .setDescription("Removes the user mentioned from the interupt list")
     .addStringOption((option) => {
       return option
         .setName("name")
-        .setDescription("Tag the user you want interupted. Example: @user")
+        .setDescription("Tag the user you want removed. Example: @user")
         .setRequired(true);
     }),
   async execute(interaction) {
     let userMentiond = interaction.options._hoistedOptions[0].value;
     let user = await getUserFromMention(userMentiond);
-    const addUserToDb = await Users.create({
-      name: user.username,
-      discordId: user.id,
-    });
-    console.log("added user to Sequelize");
+
+    const deletedUser = await Users.destroy({ where: { discordId: user.id } });
+
+    if (!deletedUser) return interaction.reply("That user does not exist");
+    console.log("removed user from Sequelize");
   },
 };
