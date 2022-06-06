@@ -6,6 +6,7 @@ const {
   NoSubscriberBehavior,
   StreamType,
 } = require("@discordjs/voice");
+const client = require("../client");
 const Users = require("../dataStorage/db");
 
 const player = createAudioPlayer({
@@ -38,6 +39,8 @@ module.exports = {
       let voiceChannel = newState.channelId;
       let guildId = newState.guild.id;
       const discordIds = await Users.findAll();
+      let channelInfo = await client.channels.fetch(voiceChannel);
+      console.log(channelInfo);
 
       if (voiceChannel !== null) {
         let connection = joinVoiceChannel({
