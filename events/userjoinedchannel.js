@@ -57,8 +57,13 @@ module.exports = {
         });
 
         connection.receiver.speaking.on("end", (userId) => {
-          if (user.includes(userId)) {
-            player.pause(resource);
+          for (var i = 0; i < user.length; i++) {
+            let test = connection.receiver.speaking.users.has(user[i]);
+            if (test) {
+              return;
+            } else {
+              player.pause(resource);
+            }
           }
         });
       }
