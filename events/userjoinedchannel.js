@@ -17,7 +17,6 @@ const player = createAudioPlayer({
 let resource = createAudioResource(createReadStream("thornberry.ogg"), {
   inputType: StreamType.OggOpus,
 });
-player.play(resource);
 
 player.on("stateChange", (oldState, newState) => {
   console.log(
@@ -39,8 +38,8 @@ module.exports = {
       let voiceChannel = newState.channelId;
       let guildId = newState.guild.id;
       const discordIds = await Users.findAll();
-      let channelInfo = await client.channels.fetch(voiceChannel);
-      console.log(channelInfo);
+      // let channelInfo = await client.channels.fetch(voiceChannel);
+      // console.log(channelInfo);
 
       if (voiceChannel !== null) {
         let connection = joinVoiceChannel({
@@ -60,13 +59,18 @@ module.exports = {
         });
 
         connection.receiver.speaking.on("end", (userId) => {
+          let speakingSize = connection.receiver.speaking.users.size;
           if (user.includes(userId)) {
-            for (var i = 0; i < user.length; i++) {
-              let test = connection.receiver.speaking.users.has(user[i]);
-              if (test) {
-                return;
-              } else {
-                player.pause(resource);
+            if (speakingSize === 1) {
+              player.pause(resource);
+            } else {
+              for (var i = 0; i < user.length; i++) {
+                let test = connection.receiver.speaking.users.has(user[i]);
+                if (test) {
+                  return;
+                } else {
+                  player.pause(resource);
+                }
               }
             }
           }
