@@ -27,12 +27,18 @@ module.exports = {
         .setRequired(true);
     }),
   async execute(interaction) {
-    let userMentiond = interaction.options._hoistedOptions[0].value;
-    let user = await getUserFromMention(userMentiond);
-    const addUserToDb = await Users.create({
-      name: user.username,
-      discordId: user.id,
-    });
-    console.log("added user to Sequelize");
+    const userMentiond = interaction.options._hoistedOptions[0].value;
+    const user = await getUserFromMention(userMentiond);
+    const userExist = await Users.findOne({ where: { discordId: user.id } });
+
+    if (userExist) {
+      interaction.reply("User is already on the interupt list");
+    } else {
+      const addUserToDb = await Users.create({
+        name: user.username,
+        discordId: user.id,
+      });
+      interaction.reply("User successfully added to interupt list!");
+    }
   },
 };
