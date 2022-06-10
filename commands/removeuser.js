@@ -33,10 +33,15 @@ module.exports = {
     const deletedUser = await Users.destroy({ where: { discordId: user.id } });
 
     if (!deletedUser) {
-      return interaction.reply("That user does not exist");
+      return interaction.reply({
+        content: "That user does not exist",
+        ephemeral: true,
+      });
     } else {
-      interaction.reply("User deleted from interupt list");
+      interaction.reply({
+        content: "User deleted from interupt list",
+        ephemeral: true,
+      });
     }
-    console.log("removed user from Sequelize");
   },
 };

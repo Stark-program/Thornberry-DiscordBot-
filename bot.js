@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { Collection } = require("discord.js");
+const { Collection, Permissions } = require("discord.js");
 require("dotenv").config();
 
 const client = require("./client");
@@ -21,26 +21,36 @@ const commandFiles = fs
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);
-  // Set a new item in the Collection
-  // With the key as the command name and the value as the exported module
   client.commands.set(command.data.name, command);
 }
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
-  const command = client.commands.get(interaction.commandName);
+  const adminPerm = Permissions.FLAGS.ADMINISTRATOR;
+  const bitPermissions = new Permissions(
+    interaction.memberPermissions.bitfield
+  );
+  const checkUserPerms = bitPermissions.has(adminPerm);
+  if (checkUserPerms) {
+    if (!interaction.isCommand()) return;
+    const command = client.commands.get(interaction.commandName);
 
-  if (!command) return;
+    if (!command) return;
 
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    await interaction.reply({
-      content: "There was an error while executing this command!",
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(error);
+      await interaction.reply({
+        content: "There was an error while executing this command!",
+        ephemeral: true,
+      });
+    }
+  } else
+    interaction.reply({
+      content:
+        "You do not have permission to use this command. Admin permissions required.",
       ephemeral: true,
     });
-  }
 });
 
 /*#################### EVENTS #####################*/

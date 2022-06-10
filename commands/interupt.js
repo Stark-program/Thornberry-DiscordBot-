@@ -32,13 +32,19 @@ module.exports = {
     const userExist = await Users.findOne({ where: { discordId: user.id } });
 
     if (userExist) {
-      interaction.reply("User is already on the interupt list");
+      interaction.reply({
+        content: "User is already on the interupt list",
+        ephemeral: true,
+      });
     } else {
       const addUserToDb = await Users.create({
         name: user.username,
         discordId: user.id,
       });
-      interaction.reply("User successfully added to interupt list!");
+      interaction.reply({
+        content: "User successfully added to interupt list!,",
+        ephemeral: true,
+      });
     }
   },
 };
