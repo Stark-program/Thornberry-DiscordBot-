@@ -52,6 +52,13 @@ module.exports = {
 
         connection.subscribe(player);
         connection.receiver.speaking.on("start", (userId) => {
+          console.log(connection.receiver.speaking.users);
+
+          // console.log(
+          //   connection.receiver.speaking.addListener("keyPress", (event) => {
+          //     console.log(event), null;
+          //   })
+          // );
           if (user.includes(userId)) {
             player.play(resource);
             player.unpause(resource);
@@ -60,17 +67,16 @@ module.exports = {
 
         connection.receiver.speaking.on("end", (userId) => {
           let speakingSize = connection.receiver.speaking.users.size;
-          if (user.includes(userId)) {
-            if (speakingSize === 1) {
-              player.pause(resource);
-            } else {
-              for (var i = 0; i < user.length; i++) {
-                let test = connection.receiver.speaking.users.has(user[i]);
-                if (test) {
-                  return;
-                } else {
-                  player.pause(resource);
-                }
+          console.log(speakingSize);
+          if (speakingSize === 1 && user.includes(userId)) {
+            return player.pause(resource);
+          } else {
+            for (var i = 0; i < user.length; i++) {
+              let test = connection.receiver.speaking.users.has(user[i]);
+              if (test) {
+                return;
+              } else {
+                return player.pause(resource);
               }
             }
           }
@@ -79,3 +85,6 @@ module.exports = {
     }
   },
 };
+
+// push to talk fucks the bot up. fix it.
+// if another user beings talking when person who is interupted is talking, the audio files continues even if interupted user stops talking.
