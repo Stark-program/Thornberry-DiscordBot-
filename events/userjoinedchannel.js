@@ -52,8 +52,6 @@ module.exports = {
 
         connection.subscribe(player);
         connection.receiver.speaking.on("start", (userId) => {
-          console.log(connection.receiver.speaking.users);
-
           // console.log(
           //   connection.receiver.speaking.addListener("keyPress", (event) => {
           //     console.log(event), null;
@@ -66,25 +64,26 @@ module.exports = {
         });
 
         connection.receiver.speaking.on("end", (userId) => {
-          let speakingSize = connection.receiver.speaking.users.size;
-          console.log(speakingSize);
-          if (speakingSize === 1 && user.includes(userId)) {
-            return player.pause(resource);
-          } else {
-            for (var i = 0; i < user.length; i++) {
-              let test = connection.receiver.speaking.users.has(user[i]);
-              if (test) {
-                return;
-              } else {
-                return player.pause(resource);
+          // we set a timeout here because when a user stops talking, it takes time for that user to be removed from the speakingMap. specifically a DELAY of 100. (whatever 100 means, i could not tell in the docs)
+          // We are utilizing this speakingMap to detect who is accuratley speaking, and who is not.
+          // because of this, we need to give appropriate time for the speakingMap to update. Therefore, we are waiting just 10 miliseconds before executing the code.
+          setTimeout(() => {
+            let speakingSize = connection.receiver.speaking.users.size;
+            if (speakingSize === 1 && user.includes(userId)) {
+              return player.pause(resource);
+            } else {
+              for (var i = 0; i < user.length; i++) {
+                let test = connection.receiver.speaking.users.has(user[i]);
+                if (test) {
+                  return;
+                } else {
+                  return player.pause(resource);
+                }
               }
             }
-          }
+          }, 10);
         });
       }
     }
   },
 };
-
-// push to talk fucks the bot up. fix it.
-// if another user beings talking when person who is interupted is talking, the audio files continues even if interupted user stops talking.
