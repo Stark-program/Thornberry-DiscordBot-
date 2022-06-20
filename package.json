@@ -10,7 +10,6 @@
     "dotenv": "^9.0.2",
     "ffmpeg-static": "^4.4.1",
     "nodemon": "^2.0.16",
-    "sequelize": "^6.20.1",
     "sqlite3": "^5.0.8",
     "tweetnacl": "^1.0.3"
   },
