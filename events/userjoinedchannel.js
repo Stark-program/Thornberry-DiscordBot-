@@ -7,7 +7,6 @@ const {
   StreamType,
 } = require("@discordjs/voice");
 const client = require("../client");
-const Users = require("../dataStorage/db");
 
 const player = createAudioPlayer({
   behaviors: {

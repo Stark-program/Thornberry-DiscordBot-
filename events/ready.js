@@ -1,5 +1,3 @@
-const Users = require("../dataStorage/db");
-
 module.exports = {
   name: "ready",
   once: true,

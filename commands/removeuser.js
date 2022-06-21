@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const Users = require("../dataStorage/db");
+
 const client = require("../client");
 
 async function getUserFromMention(mention) {
