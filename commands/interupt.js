@@ -30,22 +30,10 @@ module.exports = {
   async execute(interaction) {
     const userMentiond = interaction.options._hoistedOptions[0].value;
     const user = await getUserFromMention(userMentiond);
-    const userExist = await Users.findOne({ where: { discordId: user.id } });
-
-    if (userExist) {
-      interaction.reply({
-        content: "User is already on the interupt list",
-        ephemeral: true,
-      });
-    } else {
-      const addUserToDb = await Users.create({
-        name: user.username,
-        discordId: user.id,
-      });
-      interaction.reply({
-        content: "User successfully added to interupt list!,",
-        ephemeral: true,
-      });
-    }
+    const guildId = interaction.member.guild.id;
+    const discordId = user.id;
+    const username = user.username;
+    //call the function to store the command and its information into the database
+    putItem(guildId, discordId, username);
   },
 };

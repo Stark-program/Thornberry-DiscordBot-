@@ -60,8 +60,14 @@ module.exports = {
           connection.receiver.speaking.on("start", (userId) => {
             //if the user speaking is in the interupt list, play the audio resource
             if (user.includes(userId)) {
-              player.play(resource);
-              player.unpause(resource);
+              if (
+                player.state.status !== "paused" &&
+                player.state.status !== "playing"
+              ) {
+                player.play(resource);
+              } else {
+                player.unpause(resource);
+              }
             }
           });
 
@@ -80,7 +86,7 @@ module.exports = {
                   return player.pause(resource);
                 }
               }
-            }, 10);
+            }, 100);
           });
         }
       }
