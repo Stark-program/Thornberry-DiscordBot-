@@ -48,6 +48,6 @@ module.exports = {
     const discordId = user.id;
     const username = user.username;
     //call the function to store the information into the database
-    // putItem(guildId, discordId, username);
+    putItem(guildId, discordId, username);
   },
 };
