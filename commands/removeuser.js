@@ -1,10 +1,9 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const deleteItem = require("../dataStorage/deleteitem");
+const deleteItem = require("../data/deleteitem");
 const {
   MessageMentions: { USERS_PATTERN },
 } = require("discord.js");
 const client = require("../client");
-console.log(deleteItem);
 
 function getUserFromMention(mention) {
   // The id is the first and only match found by the RegEx.
@@ -36,16 +35,10 @@ module.exports = {
     const guildId = interaction.member.guild.id;
     const discordId = user.id;
     const deletedUser = await deleteItem(guildId, discordId);
-    // if (!deletedUser) {
-    //   return interaction.reply({
-    //     content: "That user does not exist",
-    //     ephemeral: true,
-    //   });
-    // } else {
-    //   interaction.reply({
-    //     content: "User deleted from interupt list",
-    //     ephemeral: true,
-    //   });
-    // }
+
+    interaction.reply({
+      content: "User deleted from interupt list",
+      ephemeral: true,
+    });
   },
 };

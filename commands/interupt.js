@@ -4,7 +4,7 @@ const {
 } = require("discord.js");
 
 const client = require("../client");
-const putItem = require("../dataStorage/putitem");
+const putItem = require("../data/putitem");
 
 function getUserFromMention(mention) {
   // The id is the first and only match found by the RegEx.

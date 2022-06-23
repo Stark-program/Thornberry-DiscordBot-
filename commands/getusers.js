@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const getUsers = require("../dataStorage/getusers");
+const getUsers = require("../data/getusers");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("getusers")
