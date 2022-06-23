@@ -12,12 +12,16 @@ getUsers = async (guildId) => {
 
   try {
     const data = await ddbClient.send(new QueryCommand(params));
-    let users = data.Items;
-    const listedUsers = users.map((element) => {
-      let username = element.discordName;
-      return username;
-    });
-    return listedUsers;
+    const users = data.Items;
+    if (users.length === 0) {
+      return false;
+    } else {
+      const listedUsers = users.map((element) => {
+        const username = element.discordName;
+        return username;
+      });
+      return listedUsers;
+    }
   } catch (err) {
     console.error(err);
   }

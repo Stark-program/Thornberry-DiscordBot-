@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { user } = require("../client");
 const getUsers = require("../dataStorage/getusers");
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,9 +8,17 @@ module.exports = {
   async execute(interaction) {
     const guildId = interaction.member.guild.id;
     const userList = await getUsers(guildId);
-    let userString = userList.map((user) => user).join(" ");
-    return interaction.reply(
-      `These are the users currently being interupted: ${userString}`
-    );
+    if (!userList) {
+      return interaction.reply({
+        content: "There are no users currently being interupted",
+        ephemeral: true,
+      });
+    } else {
+      let userString = userList.map((user) => user).join(" ");
+      return interaction.reply({
+        content: `These are the users currently being interupted: ${userString}`,
+        ephemeral: true,
+      });
+    }
   },
 };
