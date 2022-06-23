@@ -1,21 +1,24 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-
+const deleteItem = require("../dataStorage/deleteitem");
+const {
+  MessageMentions: { USERS_PATTERN },
+} = require("discord.js");
 const client = require("../client");
+console.log(deleteItem);
 
-async function getUserFromMention(mention) {
-  if (!mention) return;
+function getUserFromMention(mention) {
+  // The id is the first and only match found by the RegEx.
+  const matches = mention.matchAll(USERS_PATTERN).next().value;
 
-  if (mention.startsWith("<@") && mention.endsWith(">")) {
-    mention = mention.slice(2, -1);
+  // If supplied variable was not a mention, matches will be null instead of an array.
+  if (!matches) return;
 
-    if (mention.startsWith("!")) {
-      mention = mention.slice(1);
-    }
-    let user = await client.users.fetch(mention);
-    return user;
-  }
+  // The first element in the matches array will be the entire mention, not just the ID,
+  // so use index 1.
+  const id = matches[1];
+
+  return client.users.cache.get(id);
 }
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("removeuser")
@@ -28,20 +31,21 @@ module.exports = {
     }),
   async execute(interaction) {
     let userMentiond = interaction.options._hoistedOptions[0].value;
-    let user = await getUserFromMention(userMentiond);
+    let user = getUserFromMention(userMentiond);
 
-    const deletedUser = await Users.destroy({ where: { discordId: user.id } });
-
-    if (!deletedUser) {
-      return interaction.reply({
-        content: "That user does not exist",
-        ephemeral: true,
-      });
-    } else {
-      interaction.reply({
-        content: "User deleted from interupt list",
-        ephemeral: true,
-      });
-    }
+    const guildId = interaction.member.guild.id;
+    const discordId = user.id;
+    const deletedUser = await deleteItem(guildId, discordId);
+    // if (!deletedUser) {
+    //   return interaction.reply({
+    //     content: "That user does not exist",
+    //     ephemeral: true,
+    //   });
+    // } else {
+    //   interaction.reply({
+    //     content: "User deleted from interupt list",
+    //     ephemeral: true,
+    //   });
+    // }
   },
 };

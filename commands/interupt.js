@@ -7,7 +7,6 @@ const client = require("../client");
 const putItem = require("../dataStorage/putitem");
 
 function getUserFromMention(mention) {
-  console.log(mention);
   // The id is the first and only match found by the RegEx.
   const matches = mention.matchAll(USERS_PATTERN).next().value;
 
@@ -35,19 +34,23 @@ module.exports = {
     }),
   async execute(interaction) {
     const userMentiond = interaction.options._hoistedOptions[0].value;
-    const user = await getUserFromMention(userMentiond);
+    const user = getUserFromMention(userMentiond);
     if (!user) {
       return interaction.reply({
         content:
           "Please enter the user in correctly, with no extra characters. example: @user",
         ephemeral: true,
       });
+    } else {
+      const guildId = interaction.member.guild.id;
+      const discordId = user.id;
+      const username = user.username;
+      //call the function to store the information into the database
+      putItem(guildId, discordId, username);
+      return interaction.reply({
+        content: "User successfully added to the interupt list!",
+        ephemeral: true,
+      });
     }
-    console.log(user);
-    const guildId = interaction.member.guild.id;
-    const discordId = user.id;
-    const username = user.username;
-    //call the function to store the information into the database
-    putItem(guildId, discordId, username);
   },
 };
