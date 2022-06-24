@@ -21,7 +21,7 @@ client.on("ready", async (client) => {
 
 const player = createAudioPlayer({
   behaviors: {
-    noSubscriber: NoSubscriberBehavior.Pause,
+    noSubscriber: NoSubscriberBehavior.Stop,
   },
 });
 let resource = createAudioResource(createReadStream("thornberry.ogg"), {
@@ -61,8 +61,6 @@ module.exports = {
             selfMute: false,
           });
 
-          // have the bot subscribe to the audio resource, ready to play
-
           // When a user starts talking, emmit the speaking event
           connection.receiver.speaking.on("start", (userId) => {
             //if the user speaking is in the interupt list, play the audio resource
@@ -80,8 +78,6 @@ module.exports = {
           });
 
           connection.receiver.speaking.on("end", (userId) => {
-            console.log("stopped speaking");
-
             // we set a timeout here because when a user stops talking, it takes time for that user to be removed from the speakingMap. specifically a DELAY of 100. (whatever 100 means, i could not tell in the docs)
             // We are utilizing this speakingMap to detect who is accuratley speaking, and who is not.
             // because of this, we need to give appropriate time for the speakingMap to update. Therefore, we are waiting just 10 miliseconds before executing the code.
