@@ -1,7 +1,20 @@
 const { QueryCommand } = require("@aws-sdk/lib-dynamodb");
 const { ddbClient } = require("./dynamoclient");
+const client = require("../client");
+console.log(client.guilds.cache);
+const getInteruptUsers = async () => {
+  const guildIds = Array.from(client.guilds.cache.keys());
+  console.log(guildIds);
+  const interuptObj = {};
+  for (var i = 0; i < guildIds.length; i++) {
+    const key = guildIds[i];
+    const interuptIds = await dbGetUsers(guildIds[i]);
+    interuptObj[key] = interuptIds;
+  }
+  console.log(interuptObj);
+};
 
-usersOnReady = async (guildId) => {
+dbGetUsers = async (guildId) => {
   const params = {
     KeyConditionExpression: `guildId = :guildId`,
     ExpressionAttributeValues: {
@@ -23,4 +36,6 @@ usersOnReady = async (guildId) => {
   }
 };
 
-module.exports = usersOnReady;
+getInteruptUsers();
+
+module.exports = dbGetUsers;

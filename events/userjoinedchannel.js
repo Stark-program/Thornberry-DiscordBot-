@@ -6,7 +6,7 @@ const {
   NoSubscriberBehavior,
   StreamType,
 } = require("@discordjs/voice");
-const client = require("../client");
+const interuptObj = require("./ready");
 
 const player = createAudioPlayer({
   behaviors: {
